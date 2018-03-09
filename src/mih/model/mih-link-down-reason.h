@@ -45,8 +45,10 @@ namespace ns3 {
       virtual uint32_t TlvDeserialize (Buffer &buffer);
       TLV_TYPE_HELPER_HEADER (LinkDownReason);
     protected:
+      friend std::ostream &operator << (std::ostream &os, const LinkDownReason &a);
       enum Type m_reason;
     };
+    std::ostream &operator << (std::ostream &os, const LinkDownReason &a);
   } // namespace mih
 } // namespace ns3
 

@@ -58,5 +58,11 @@ namespace ns3 {
       m_reason = static_cast<enum LinkDownReason::Type> (typ);
       return bytesRead;
     }
+    std::ostream &
+    operator << (std::ostream &os, const LinkDownReason &a)
+    {
+      os << "[Reason = " <<a.m_reason << "]";
+      return os;
+    }
   } // namespace mih
 } // namespace ns3

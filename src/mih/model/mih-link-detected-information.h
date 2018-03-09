@@ -33,6 +33,7 @@
 #include "mih-capability-flag.h"
 #include "mih-network-capabilities.h"
 #include "mih-tlv.h"
+#include "ns3/supported-rates.h"
 
 namespace ns3 {
   namespace mih {
@@ -44,7 +45,8 @@ namespace ns3 {
 			       NetworkAuxiliaryIdentifier networkAuxiliaryIdentifier,
 			       SignalStrength signalStrength,
 			       uint16_t sinr,
-			       DataRate dataRate,
+			       //DataRate dataRate,
+                               SupportedRates supportedRates,
 			       MihCapabilityFlag mihCapabilityFlag,
 			       NetworkCapabilities networkCapabilities);
       LinkDetectedInformation (LinkDetectedInformation const &o);
@@ -53,7 +55,8 @@ namespace ns3 {
       NetworkAuxiliaryIdentifier GetNetworkAuxiliaryIdentifier (void);
       SignalStrength GetSignalStrength (void);
       uint16_t GetSinr (void);
-      DataRate GetDataRate (void);
+      //DataRate GetDataRate (void);
+      SupportedRates GetSupportedRates (void);
       MihCapabilityFlag GetMihCapabilityFlag (void);
       NetworkCapabilities GetNetworkCapabilities (void);
       virtual uint32_t GetTlvSerializedSize (void) const;
@@ -67,7 +70,8 @@ namespace ns3 {
       NetworkAuxiliaryIdentifier m_networkAuxiliaryIdentifier;
       SignalStrength m_signalStrength;
       uint16_t m_sinr;
-      DataRate m_dataRate;
+      //DataRate m_dataRate;
+      SupportedRates m_supportedRates;
       MihCapabilityFlag m_mihCapabilityFlag;
       NetworkCapabilities m_networkCapabilities;
     };

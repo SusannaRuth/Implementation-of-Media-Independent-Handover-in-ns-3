@@ -29,7 +29,8 @@ namespace ns3 {
 						      NetworkAuxiliaryIdentifier networkAuxiliaryIdentifier,
 						      SignalStrength signalStrength,
 						      uint16_t sinr,
-						      DataRate dataRate,
+						      //DataRate dataRate,
+                                                      SupportedRates supportedRates,
 						      MihCapabilityFlag mihCapabilityFlag,
 						      NetworkCapabilities networkCapabilities) :
       m_linkIdentifier (linkIdentifier),
@@ -37,7 +38,8 @@ namespace ns3 {
       m_networkAuxiliaryIdentifier (networkAuxiliaryIdentifier),
       m_signalStrength (signalStrength),
       m_sinr (sinr),
-      m_dataRate (dataRate),
+      //m_dataRate (dataRate),
+      m_supportedRates ( supportedRates),
       m_mihCapabilityFlag (mihCapabilityFlag),
       m_networkCapabilities (networkCapabilities)
     {}
@@ -47,7 +49,8 @@ namespace ns3 {
       m_networkAuxiliaryIdentifier (o.m_networkAuxiliaryIdentifier),
       m_signalStrength (o.m_signalStrength),
       m_sinr (o.m_sinr),
-      m_dataRate (o.m_dataRate),
+      //m_dataRate (o.m_dataRate),
+      m_supportedRates ( o.m_supportedRates),
       m_mihCapabilityFlag (o.m_mihCapabilityFlag),
       m_networkCapabilities (o.m_networkCapabilities)
     {}
@@ -76,10 +79,15 @@ namespace ns3 {
     {
       return m_sinr;
     }
-    DataRate 
+    /*DataRate 
     LinkDetectedInformation::GetDataRate (void)
     {
       return m_dataRate;
+    }*/
+    SupportedRates
+    LinkDetectedInformation::GetSupportedRates (void)
+    {
+      return m_supportedRates;
     }
     MihCapabilityFlag 
     LinkDetectedInformation::GetMihCapabilityFlag (void)
@@ -101,7 +109,7 @@ namespace ns3 {
         m_networkAuxiliaryIdentifier.GetTlvSerializedSize () +
         m_signalStrength.GetTlvSerializedSize () +
         Tlv::GetSerializedSizeU16 () +
-        m_dataRate.GetTlvSerializedSize () +
+        //m_dataRate.GetTlvSerializedSize () +
         m_mihCapabilityFlag.GetTlvSerializedSize () +
         m_networkCapabilities.GetTlvSerializedSize ();
 
@@ -120,7 +128,7 @@ namespace ns3 {
         m_networkAuxiliaryIdentifier.GetTlvSerializedSize () +
         m_signalStrength.GetTlvSerializedSize () +
         Tlv::GetSerializedSizeU16 () +
-        m_dataRate.GetTlvSerializedSize () +
+        //m_dataRate.GetTlvSerializedSize () +
         m_mihCapabilityFlag.GetTlvSerializedSize () +
         m_networkCapabilities.GetTlvSerializedSize ();
 
@@ -138,7 +146,7 @@ namespace ns3 {
       m_networkAuxiliaryIdentifier.TlvSerialize (buffer);
       m_signalStrength.TlvSerialize (buffer);
       Tlv::SerializeU16 (buffer, m_sinr, TLV_SINR);
-      m_dataRate.TlvSerialize (buffer);
+      //m_dataRate.TlvSerialize (buffer);
       m_mihCapabilityFlag.TlvSerialize (buffer);
       m_networkCapabilities.TlvSerialize (buffer);
     }
@@ -162,7 +170,7 @@ namespace ns3 {
       totalBytesRead += m_networkAuxiliaryIdentifier.TlvDeserialize (buffer);
       totalBytesRead += m_signalStrength.TlvDeserialize (buffer);
       totalBytesRead += Tlv::DeserializeU16 (buffer, m_sinr, TLV_SINR);
-      totalBytesRead += m_dataRate.TlvDeserialize (buffer);
+      //totalBytesRead += m_dataRate.TlvDeserialize (buffer);
       totalBytesRead += m_mihCapabilityFlag.TlvDeserialize (buffer);
       totalBytesRead += m_networkCapabilities.TlvDeserialize (buffer);
       return totalBytesRead;

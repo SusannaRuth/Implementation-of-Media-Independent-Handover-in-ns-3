@@ -1,7 +1,7 @@
 ## -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
 
 def build(bld):
-    module = bld.create_ns3_module('mih', ['internet', 'wifi', 'core'])
+    module = bld.create_ns3_module('mih', ['internet', 'core'])
     module.includes = '.'
     module.source = [
         'model/mih-tlv.cc',
@@ -73,6 +73,8 @@ def build(bld):
         'model/mih-protocol.cc',
         'model/simple-mih-link-sap.cc',
         'model/simple-mih-user.cc',
+        'model/wifi-mih-link-sap.cc',
+        'helper/wifi-mih-link-sap-helper.cc',
         ]
 
     #aodv_test = bld.create_ns3_module_test_library('aodv')
@@ -83,6 +85,11 @@ def build(bld):
     #    'test/bug-772.cc',
     #    'test/loopback.cc',
     #    ]
+    #module_test = bld.create_ns3_module_test_library('mih')
+    #module_test.source = [
+    #    'test/wifi-mih-link-sap-test.cc',
+    #    ]
+
 
     headers = bld(features='ns3header')
     headers.module = 'mih'
@@ -159,6 +166,8 @@ def build(bld):
         'model/mih-protocol.h',
         'model/simple-mih-link-sap.h',
         'model/simple-mih-user.h',
+        'model/wifi-mih-link-sap.h',
+        'helper/wifi-mih-link-sap-helper.h',
         ]
 
     #if bld.env['ENABLE_EXAMPLES']:

@@ -40,6 +40,18 @@ namespace ns3 {
                               LinkDetectedInformationList linkDetectedInfoList) 
     {
       NS_LOG_FUNCTION (this);
+      NS_LOG_DEBUG ("MIH LinkDetected Event");
+      NS_LOG_DEBUG ("Source Mihf Identifier = " << sourceMihfId);
+      for (std::vector<Ptr<LinkDetectedInformation>>::iterator i = linkDetectedInfoList.begin (); i != linkDetectedInfoList.end (); ++i)
+        {
+          NS_LOG_DEBUG ("\n from Link Identifier = " << (*i)->GetLinkIdentifier () << ", SNR = " << (*i)->GetSinr ());
+          SupportedRates rates = (*i)->GetSupportedRates ();
+          NS_LOG_DEBUG ("Supported Rates ");
+          for (uint32_t j = 0; j < rates.GetNRates (); j++)
+            {
+              NS_LOG_DEBUG (rates.GetRate (j)<<", ");
+            }
+        }
       m_linkDetectedTraceCallback (sourceMihfId,
                                    linkDetectedInfoList);
     }
@@ -52,6 +64,8 @@ namespace ns3 {
                         MobilityManagementSupport mobilitySupport) 
     {
       NS_LOG_FUNCTION (this);
+      NS_LOG_DEBUG ("MIH LinkUp Event");
+      NS_LOG_DEBUG ("Source Mihf Identifier = " << sourceMihfId << ", from Link Identifier = " << linkIdentifier << ", Old AR = " << oldAR << ", New AR = " << newAR);
       m_linkUpTracedCallback (sourceMihfId,
                               linkIdentifier,
                               oldAR,
@@ -66,6 +80,8 @@ namespace ns3 {
                           LinkDownReason reason) 
     {
       NS_LOG_FUNCTION (this);
+      NS_LOG_DEBUG ("MIH LinkDown Event");
+      NS_LOG_DEBUG ("Source Mihf Identifier = " << sourceMihfId << ", from Link Identifier = " << linkIdentifier << ", Old AR = " << oldAR << ", Reason = " << reason);
       m_linkDownTracedCallback (sourceMihfId,
                                 linkIdentifier,
                                 oldAR,
