@@ -38,7 +38,7 @@ Ptr<mih::WifiMihLinkSap>
 WifiMihLinkSapHelper::Install (Ptr<Node> node) const
 {
   Ptr<mih::WifiMihLinkSap> mihLinkSap = CreateObject<mih::WifiMihLinkSap> ();
-  node->AggregateObject(mihLinkSap);
+  node->AggregateObject (mihLinkSap);
   return mihLinkSap;
 }
       

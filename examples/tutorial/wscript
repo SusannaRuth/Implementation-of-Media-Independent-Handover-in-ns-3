@@ -31,11 +31,3 @@ def build(bld):
     obj = bld.create_ns3_program('seventh', ['core', 'stats', 'point-to-point', 'internet', 'applications'])
     obj.source = 'seventh.cc'
 
-    obj = bld.create_ns3_program('wifi-mih-example', ['core', 'wifi', 'internet', 'applications'])
-    obj.source = 'wifi-mih-example.cc'
-
-    obj = bld.create_ns3_program('wifi-mih-link-down-example', ['core', 'wifi', 'internet', 'applications'])
-    obj.source = 'wifi-mih-link-down-example.cc'
-
-    obj = bld.create_ns3_program('mih-ex', ['core', 'wifi', 'internet', 'applications'])
-    obj.source = 'mih-ex.cc'

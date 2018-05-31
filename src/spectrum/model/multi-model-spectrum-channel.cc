@@ -134,6 +134,12 @@ MultiModelSpectrumChannel::GetTypeId (void)
                      "reported in this trace. ",
                      MakeTraceSourceAccessor (&MultiModelSpectrumChannel::m_pathLossTrace),
                      "ns3::SpectrumChannel::LossTracedCallback")
+    .AddTraceSource ("TxSigParams",
+                     "This trace is fired whenever a signal is transmitted. "
+                     "The sole parameter is a pointer to a copy of the "
+                     "SpectrumSignalParameters provided by the transmitter.",
+                     MakeTraceSourceAccessor (&MultiModelSpectrumChannel::m_txSigParamsTrace),
+                     "ns3::MultiModelSpectrumChannel::SignalParametersTracedCallback")
   ;
   return tid;
 }
@@ -150,8 +156,6 @@ MultiModelSpectrumChannel::AddRx (Ptr<SpectrumPhy> phy)
   NS_ASSERT_MSG ((0 != rxSpectrumModel), "phy->GetRxSpectrumModel () returned 0. Please check that the RxSpectrumModel is already set for the phy before calling MultiModelSpectrumChannel::AddRx (phy)");
 
   SpectrumModelUid_t rxSpectrumModelUid = rxSpectrumModel->GetUid ();
-
-  std::vector<Ptr<SpectrumPhy> >::const_iterator it;
 
   // remove a previous entry of this phy if it exists
   // we need to scan for all rxSpectrumModel values since we don't
@@ -190,11 +194,16 @@ MultiModelSpectrumChannel::AddRx (Ptr<SpectrumPhy> phy)
            ++txInfoIterator)
         {
           Ptr<const SpectrumModel> txSpectrumModel = txInfoIterator->second.m_txSpectrumModel;
-          NS_LOG_LOGIC ("Creating converters between SpectrumModelUids " << txSpectrumModel->GetUid () << " and " << rxSpectrumModelUid );
-          SpectrumConverter converter (txSpectrumModel, rxSpectrumModel);
-          std::pair<SpectrumConverterMap_t::iterator, bool> ret2;
-          ret2 = txInfoIterator->second.m_spectrumConverterMap.insert (std::make_pair (rxSpectrumModelUid, converter));
-          NS_ASSERT (ret2.second);
+          SpectrumModelUid_t txSpectrumModelUid = txSpectrumModel->GetUid ();
+
+          if (rxSpectrumModelUid != txSpectrumModelUid && !txSpectrumModel->IsOrthogonal (*rxSpectrumModel))
+            {
+              NS_LOG_LOGIC ("Creating converter between SpectrumModelUid " << txSpectrumModel->GetUid () << " and " << rxSpectrumModelUid);
+              SpectrumConverter converter (txSpectrumModel, rxSpectrumModel);
+              std::pair<SpectrumConverterMap_t::iterator, bool> ret2;
+              ret2 = txInfoIterator->second.m_spectrumConverterMap.insert (std::make_pair (rxSpectrumModelUid, converter));
+              NS_ASSERT (ret2.second);
+            }
         }
     }
   else
@@ -231,9 +240,9 @@ MultiModelSpectrumChannel::FindAndEventuallyAddTxSpectrumModel (Ptr<const Spectr
           Ptr<const SpectrumModel> rxSpectrumModel = rxInfoIterator->second.m_rxSpectrumModel;
           SpectrumModelUid_t rxSpectrumModelUid = rxSpectrumModel->GetUid ();
 
-          if (rxSpectrumModelUid != txSpectrumModelUid)
+          if (rxSpectrumModelUid != txSpectrumModelUid && !txSpectrumModel->IsOrthogonal (*rxSpectrumModel))
             {
-              NS_LOG_LOGIC ("Creating converters between SpectrumModelUids " << txSpectrumModelUid << " and " << rxSpectrumModelUid );
+              NS_LOG_LOGIC ("Creating converter between SpectrumModelUid " << txSpectrumModelUid << " and " << rxSpectrumModelUid);
 
               SpectrumConverter converter (txSpectrumModel, rxSpectrumModel);
               std::pair<SpectrumConverterMap_t::iterator, bool> ret2;
@@ -258,7 +267,8 @@ MultiModelSpectrumChannel::StartTx (Ptr<SpectrumSignalParameters> txParams)
 
   NS_ASSERT (txParams->txPhy);
   NS_ASSERT (txParams->psd);
-
+  Ptr<SpectrumSignalParameters> txParamsTrace = txParams->Copy (); // copy it since traced value cannot be const (because of potential underlying DynamicCasts)
+  m_txSigParamsTrace (txParamsTrace);
 
   Ptr<MobilityModel> txMobility = txParams->txPhy->GetMobility ();
   SpectrumModelUid_t txSpectrumModelUid = txParams->psd->GetSpectrumModelUid ();
@@ -289,7 +299,11 @@ MultiModelSpectrumChannel::StartTx (Ptr<SpectrumSignalParameters> txParams)
         {
           NS_LOG_LOGIC (" converting txPowerSpectrum SpectrumModelUids" << txSpectrumModelUid << " --> " << rxSpectrumModelUid);
           SpectrumConverterMap_t::const_iterator rxConverterIterator = txInfoIteratorerator->second.m_spectrumConverterMap.find (rxSpectrumModelUid);
-          NS_ASSERT (rxConverterIterator != txInfoIteratorerator->second.m_spectrumConverterMap.end ());
+          if (rxConverterIterator == txInfoIteratorerator->second.m_spectrumConverterMap.end ())
+            {
+              // No converter means TX SpectrumModel is orthogonal to RX SpectrumModel
+              continue;
+            }
           convertedTxPowerSpectrum = rxConverterIterator->second.Convert (txParams->psd);
         }
 
@@ -431,14 +445,21 @@ void
 MultiModelSpectrumChannel::AddPropagationLossModel (Ptr<PropagationLossModel> loss)
 {
   NS_LOG_FUNCTION (this << loss);
-  NS_ASSERT (m_propagationLoss == 0);
+  if (m_propagationLoss)
+    {
+      loss->SetNext (m_propagationLoss);
+    }
   m_propagationLoss = loss;
 }
 
 void
 MultiModelSpectrumChannel::AddSpectrumPropagationLossModel (Ptr<SpectrumPropagationLossModel> loss)
 {
-  NS_ASSERT (m_spectrumPropagationLoss == 0);
+  NS_LOG_FUNCTION (this << loss);
+  if (m_spectrumPropagationLoss)
+    {
+      loss->SetNext (m_spectrumPropagationLoss);
+    }
   m_spectrumPropagationLoss = loss;
 }
 

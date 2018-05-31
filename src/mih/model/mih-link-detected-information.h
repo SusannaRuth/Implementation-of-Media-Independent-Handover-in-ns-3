@@ -48,7 +48,8 @@ namespace ns3 {
 			       //DataRate dataRate,
                                SupportedRates supportedRates,
 			       MihCapabilityFlag mihCapabilityFlag,
-			       NetworkCapabilities networkCapabilities);
+			       NetworkCapabilities networkCapabilities,
+                               uint32_t stationCount);
       LinkDetectedInformation (LinkDetectedInformation const &o);
       LinkIdentifier GetLinkIdentifier (void);
       NetworkIdentifier GetNetworkIdentifier (void);
@@ -59,6 +60,7 @@ namespace ns3 {
       SupportedRates GetSupportedRates (void);
       MihCapabilityFlag GetMihCapabilityFlag (void);
       NetworkCapabilities GetNetworkCapabilities (void);
+      uint32_t GetStationCount (void);
       virtual uint32_t GetTlvSerializedSize (void) const;
       virtual void TlvSerialize (Buffer &buffer) const;
       virtual uint32_t TlvDeserialize (Buffer &buffer);
@@ -74,6 +76,7 @@ namespace ns3 {
       SupportedRates m_supportedRates;
       MihCapabilityFlag m_mihCapabilityFlag;
       NetworkCapabilities m_networkCapabilities;
+      uint32_t m_stationCount;
     };
     typedef std::vector<Ptr<LinkDetectedInformation> > LinkDetectedInformationList;
     typedef LinkDetectedInformationList::iterator LinkDetectedInformationI;

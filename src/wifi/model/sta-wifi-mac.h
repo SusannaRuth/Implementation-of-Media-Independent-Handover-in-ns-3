@@ -23,20 +23,20 @@
 #ifndef STA_WIFI_MAC_H
 #define STA_WIFI_MAC_H
 
-#include "regular-wifi-mac.h"
-#include "supported-rates.h"
-#include "capability-information.h"
+#include "infrastructure-wifi-mac.h"
 
 namespace ns3  {
 
 class MgtAddBaRequestHeader;
+class SupportedRates;
+class CapabilityInformation;
 
 /**
  * \ingroup wifi
  *
  * The Wifi MAC high model for a non-AP STA in a BSS.
  */
-class StaWifiMac : public RegularWifiMac
+class StaWifiMac : public InfrastructureWifiMac
 {
 public:
   /**
@@ -49,6 +49,13 @@ public:
   virtual ~StaWifiMac ();
 
   /**
+   * Set up WifiRemoteStationManager associated with this StaWifiMac.
+   *
+   * \param stationManager the station manager attached to this MAC.
+   */
+  void SetWifiRemoteStationManager (const Ptr<WifiRemoteStationManager> stationManager);
+
+  /**
    * \param packet the packet to send.
    * \param to the address to which the packet should be sent.
    *
@@ -57,6 +64,11 @@ public:
    * access is granted to this MAC.
    */
   void Enqueue (Ptr<const Packet> packet, Mac48Address to);
+
+  /**
+   * \param phy the physical layer attached to this MAC.
+   */
+  void SetWifiPhy (const Ptr<WifiPhy> phy);
 
 
 private:
@@ -93,10 +105,23 @@ private:
    */
   void SendProbeRequest (void);
   /**
-   * Forward an association request packet to the DCF. The standard is not clear on the correct
+   * Forward an association or reassociation request packet to the DCF.
+   * The standard is not clear on the correct queue for management frames if QoS is supported.
+   * We always use the DCF.
+   *
+   * \param isReassoc flag whether it is a reassociation request
+   *
+   */
+  void SendAssociationRequest (bool isReassoc);
+  /**
+   * Forward a CF-Poll response packet to the CFP queue.
+   */
+  void SendCfPollResponse (void);
+  /**
+   * Forward a disassociation request packet to the DCF. The standard is not clear on the correct
    * queue for management frames if QoS is supported. We always use the DCF.
    */
-  void SendAssociationRequest (void);
+  void SendDisassociationRequest (void);
   /**
    * Try to ensure that we are associated with an AP by taking an appropriate action
    * depending on the current association status.
@@ -156,13 +181,18 @@ private:
    * \param aifsn the number of slots that make up an AIFS
    * \param txopLimit the TXOP limit
    */
-  void SetEdcaParameters (AcIndex ac, uint8_t cwMin, uint8_t cwMax, uint8_t aifsn, Time txopLimit);
+  void SetEdcaParameters (AcIndex ac, uint32_t cwMin, uint32_t cwMax, uint8_t aifsn, Time txopLimit);
   /**
    * Return the Capability information of the current STA.
    *
    * \return the Capability information that we support
    */
   CapabilityInformation GetCapabilities (void) const;
+
+  /**
+   * Indicate that PHY capabilities have changed.
+   */
+  void PhyCapabilitiesChanged (void);
 
   MacState m_state;            ///< MAC state
   Time m_probeRequestTimeout;  ///< probe request timeout

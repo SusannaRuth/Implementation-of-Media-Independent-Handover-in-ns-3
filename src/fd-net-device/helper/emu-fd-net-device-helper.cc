@@ -186,7 +186,7 @@ EmuFdNetDeviceHelper::SetFileDescriptor (Ptr<FdNetDevice> device) const
     }
  
   close (mtufd);
-  device->SetMtu (ifr.ifr_mtu);
+  device->SetMtu (ifr2.ifr_mtu);
 }
 
 int
@@ -280,7 +280,8 @@ EmuFdNetDeviceHelper::CreateFileDescriptor (void) const
       // If the execlp successfully completes, it never returns.  If it returns it failed or the OS is
       // broken.  In either case, we bail.
       //
-      NS_FATAL_ERROR ("EmuFdNetDeviceHelper::CreateFileDescriptor(): Back from execlp(), errno = " << ::strerror (errno));
+      NS_FATAL_ERROR ("EmuFdNetDeviceHelper::CreateFileDescriptor(): Back from execlp(), status = " <<
+                      status << ", errno = " << ::strerror (errno));
     }
   else
     {

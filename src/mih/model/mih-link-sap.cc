@@ -44,7 +44,9 @@ namespace ns3 {
       NS_LOG_DEBUG ("Source Mihf Identifier = " << sourceMihfId);
       for (std::vector<Ptr<LinkDetectedInformation>>::iterator i = linkDetectedInfoList.begin (); i != linkDetectedInfoList.end (); ++i)
         {
-          NS_LOG_DEBUG ("\n from Link Identifier = " << (*i)->GetLinkIdentifier () << ", SNR = " << (*i)->GetSinr ());
+          NS_LOG_DEBUG ("\n from Link Identifier = " << (*i)->GetLinkIdentifier () << ", Signal Strength = "
+                        << (*i)->GetSignalStrength ().GetValue () << ", SNR = " << (*i)->GetSinr ()
+                        << ", StationCount = " << (*i)->GetStationCount ()); 
           SupportedRates rates = (*i)->GetSupportedRates ();
           NS_LOG_DEBUG ("Supported Rates ");
           for (uint32_t j = 0; j < rates.GetNRates (); j++)

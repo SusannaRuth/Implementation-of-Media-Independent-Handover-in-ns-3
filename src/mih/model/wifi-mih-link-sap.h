@@ -22,7 +22,6 @@
 #define   	WIFI_MIH_LINK_SAP_H
 
 #include "ns3/nstime.h"
-#include "ns3/random-variable-stream.h"
 #include "ns3/event-id.h"
 #include "mihf-id.h"
 #include "mih-link-sap.h"
@@ -34,6 +33,14 @@ namespace ns3 {
       static TypeId GetTypeId (void);
       WifiMihLinkSap (void);
       virtual ~WifiMihLinkSap (void);
+      bool LinkDetected (MihfId sourceMihfId, 
+                         LinkDetectedInformation linkDetectedInfo);
+      virtual void LinkUp (MihfId sourceMihfId, 
+                           LinkIdentifier linkIdentifier, 
+                           Address oldAR, 
+                           Address newAR,
+                           bool ipRenewal,
+                           MobilityManagementSupport mobilitySupport);
       virtual LinkType GetLinkType (void);
       void SetLinkType (LinkType linkType);
       virtual Address GetLinkAddress (void);
@@ -42,6 +49,10 @@ namespace ns3 {
       virtual void SetLinkIdentifier (LinkIdentifier linkIdentifier);
       virtual Address GetPoAAddress (void);
       virtual void SetPoAAddress (Address addr);
+      virtual double GetSignalStrength (void);
+      virtual void SetSignalStrength (double signalStrength);
+      virtual uint32_t GetStationCount (void);
+      virtual void SetStationCount (uint32_t stationCount);
       
       virtual LinkCapabilityDiscoverConfirm CapabilityDiscover (void);
       virtual LinkGetParametersConfirm GetParameters (LinkParameterTypeList linkParametersRequest, 
@@ -54,6 +65,7 @@ namespace ns3 {
                               LinkActionConfirmCallback actionConfirmCb);
       MihfId GetMihfId ();
       void SetMihfId (MihfId mihfId);
+      void SetSendAssocCallback (Callback<void> sendAssoc);
 
       //void Run (void);
       
@@ -80,6 +92,9 @@ namespace ns3 {
 				                // in trigger
     
       MihfId m_mihfId;
+      Callback<void> m_sendAssoc;
+      double m_signalStrength;
+      uint32_t m_stationCount;
       //bool m_powerUp;
 
     };

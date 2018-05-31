@@ -21,6 +21,7 @@
 #include "ns3/log.h"
 #include "ns3/assert.h"
 #include "ns3/ptr.h"
+#include "ns3/random-variable-stream.h"
 #include "mih-function.h"
 #include "mih-protocol.h"
 
@@ -103,7 +104,6 @@ namespace ns3 {
       return tid;
     }
     MihFunction::MihFunction (void) :
-      m_mihfId (),
       m_registeredMihLinkSapList (),
       m_postponedActionsConfirmCallback (MakeNullCallback<void, MihfId, Status, LinkActionResponseList> ()),
       m_linkActionResponseList (),
@@ -113,6 +113,7 @@ namespace ns3 {
       m_linkActionsComplete (false)
     {
       NS_LOG_FUNCTION (this);
+      m_mihfId = MihfId (std::to_string(CreateObject<UniformRandomVariable> ()->GetValue ())+"MIH-local@ns3");
     }
     MihFunction::~MihFunction (void)
     {

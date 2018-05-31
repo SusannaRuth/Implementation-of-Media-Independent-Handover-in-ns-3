@@ -25,6 +25,7 @@
 
 #include <ns3/object.h>
 #include <ns3/ipv4-address-helper.h>
+#include <ns3/ipv6-address-helper.h>
 #include <ns3/data-rate.h>
 #include <ns3/epc-tft.h>
 #include <ns3/eps-bearer.h>
@@ -106,6 +107,7 @@ public:
    * \param imsi the unique identifier of the UE
    * \param tft the Traffic Flow Template of the new bearer
    * \param bearer struct describing the characteristics of the EPS bearer to be activated
+   * \return bearer ID
    */
   virtual uint8_t ActivateEpsBearer (Ptr<NetDevice> ueLteDevice, uint64_t imsi, Ptr<EpcTft> tft, EpsBearer bearer) = 0;
 
@@ -132,7 +134,7 @@ public:
 
   /** 
    * 
-   * \return the address of the Default Gateway to be used by UEs to reach the internet
+   * \return the IPv4 address of the Default Gateway to be used by UEs to reach the internet
    */
   virtual Ipv4Address GetUeDefaultGatewayAddress () = 0;
 

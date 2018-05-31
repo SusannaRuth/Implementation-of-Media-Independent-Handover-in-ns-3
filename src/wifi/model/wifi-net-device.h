@@ -22,7 +22,6 @@
 #define WIFI_NET_DEVICE_H
 
 #include "ns3/net-device.h"
-#include "ns3/queue-item.h"
 #include "ns3/traced-callback.h"
 #include "ns3/mih-link-sap.h"
 #include "ns3/wifi-mih-link-sap.h"
@@ -34,6 +33,10 @@ class WifiRemoteStationManager;
 class WifiPhy;
 class WifiMac;
 class NetDeviceQueueInterface;
+class QueueItem;
+
+/// This value conforms to the 802.11 specification
+static const uint16_t MAX_MSDU_SIZE = 2304;
 
 /**
  * \defgroup wifi Wifi Models
@@ -86,8 +89,7 @@ public:
    */
   Ptr<WifiRemoteStationManager> GetRemoteStationManager (void) const;
 
-  //void AddMihLinkUpCallback (Callback<void, mih::LinkIdentifier, Address, Address, bool, 
-  //                         mih::MobilityManagementSupport> callback);
+
   //inherited from NetDevice base class.
   void SetIfIndex (const uint32_t index);
   uint32_t GetIfIndex (void) const;
@@ -148,9 +150,6 @@ private:
    */
   WifiNetDevice &operator = (const WifiNetDevice &o);
 
-  /// This value conforms to the 802.11 specification
-  static const uint16_t MAX_MSDU_SIZE = 2304;
-
   /**
    * Set that the link is up. A link is always up in ad-hoc mode.
    * For a STA, a link is up when the STA is associated with an AP.
@@ -174,7 +173,7 @@ private:
   /**
    * Generate LinkDetected event to MIHLinkSap when a link is detected.
    */
-  void MihLinkDetected (mih::LinkDetectedInformationList linkInfoList);
+  bool MihLinkDetected (mih::LinkDetectedInformation linkInfo);
   /**
    * Return the Channel this device is connected to.
    *
@@ -249,10 +248,8 @@ private:
   uint32_t m_ifIndex; //!< IF index
   bool m_linkUp; //!< link up
   TracedCallback<> m_linkChanges; //!< link change callback
-  //TracedCallback<mih::LinkIdentifier, Address, Address, bool, mih::MobilityManagementSupport> m_mihLinkUp;
   mutable uint16_t m_mtu; //!< MTU
   bool m_configComplete; //!< configuration complete
-  //Ptr<mih::WifiMihLinkSap> m_mihLinkSap;
 };
 
 } //namespace ns3

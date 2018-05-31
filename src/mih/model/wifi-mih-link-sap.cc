@@ -44,7 +44,8 @@ namespace ns3 {
       m_linkIdentifier ()
     {
       NS_LOG_FUNCTION_NOARGS ();
-      m_mihfId = MihfId (std::to_string(CreateObject<UniformRandomVariable> ()->GetValue ())+"MIH-local@ns3");
+      m_signalStrength = 0;
+      m_stationCount = 0;
       //m_eventTriggerInterval = CreateObject<UniformRandomVariable> ();
       //m_eventTriggerInterval->SetAttribute ("Min", DoubleValue(0));
       //m_eventTriggerInterval->SetAttribute ("Max", DoubleValue(0.5));
@@ -56,12 +57,54 @@ namespace ns3 {
     {
       NS_LOG_FUNCTION_NOARGS ();
     }
+
+    bool
+    WifiMihLinkSap::LinkDetected (MihfId sourceMihfId, 
+                                  LinkDetectedInformation linkDetectedInfo) 
+    {
+      NS_LOG_FUNCTION (this);
+      NS_LOG_DEBUG ("MIH LinkDetected Event");
+      NS_LOG_DEBUG ("Source Mihf Identifier = " << sourceMihfId);
+      NS_LOG_DEBUG ("\n from Link Identifier = " << linkDetectedInfo.GetLinkIdentifier () << ", Signal Strength = "
+                    << linkDetectedInfo.GetSignalStrength ().GetValue () << ", SNR = " << linkDetectedInfo.GetSinr ()
+                    << ", StationCount = " << linkDetectedInfo.GetStationCount ());  
+      SupportedRates rates = linkDetectedInfo.GetSupportedRates ();
+      NS_LOG_DEBUG ("Supported Rates ");
+      for (uint32_t j = 0; j < rates.GetNRates (); j++)
+        {
+          NS_LOG_DEBUG (rates.GetRate (j)<<", ");
+        }
+      double signalStrength = linkDetectedInfo.GetSignalStrength ().GetValue ();
+      uint32_t stationCount = linkDetectedInfo.GetStationCount ();
+      if (signalStrength > m_signalStrength && stationCount <= m_stationCount)
+        {
+          m_signalStrength = signalStrength;
+          m_stationCount = stationCount + 1;
+          return true;
+        }
+      return false;
+    }
+
+    void
+    WifiMihLinkSap::LinkUp (MihfId sourceMihfId,
+                            LinkIdentifier linkIdentifier,
+                            Address oldAR, 
+                            Address newAR, 
+                            bool ipRenewal, 
+                            MobilityManagementSupport mobilitySupport) 
+    {
+      NS_LOG_FUNCTION (this);
+      SetLinkIdentifier (linkIdentifier);
+      MihLinkSap::LinkUp (sourceMihfId, linkIdentifier, oldAR, newAR, ipRenewal, mobilitySupport);
+    }
+
     void
     WifiMihLinkSap::DoDispose (void)
     {
       NS_LOG_FUNCTION (this);
       MihLinkSap::DoDispose ();
     }
+  
     LinkType
     WifiMihLinkSap::GetLinkType (void)
     {
@@ -110,6 +153,30 @@ namespace ns3 {
       NS_LOG_FUNCTION (this);
       m_linkIdentifier.SetPoALinkAddress (addr);
     }
+    double 
+    WifiMihLinkSap::GetSignalStrength (void)
+    {
+      NS_LOG_FUNCTION (this);
+      return m_signalStrength;
+    }
+    void
+    WifiMihLinkSap::SetSignalStrength (double signalStrength)
+    {
+      NS_LOG_FUNCTION (this);
+      m_signalStrength = signalStrength;
+    }
+    uint32_t 
+    WifiMihLinkSap::GetStationCount (void)
+    {
+      NS_LOG_FUNCTION (this);
+      return m_stationCount;
+    }
+    void
+    WifiMihLinkSap::SetStationCount (uint32_t stationCount)
+    {
+      NS_LOG_FUNCTION (this);
+      m_stationCount = stationCount;
+    }
     MihfId
     WifiMihLinkSap::GetMihfId ()
     {
@@ -122,6 +189,14 @@ namespace ns3 {
       NS_LOG_FUNCTION (this);
       m_mihfId = mihfId;
     }
+
+    void 
+    WifiMihLinkSap::SetSendAssocCallback (Callback<void> sendAssoc)
+    {
+      NS_LOG_FUNCTION (this);
+      m_sendAssoc = sendAssoc;
+    }
+
     LinkCapabilityDiscoverConfirm
     WifiMihLinkSap::CapabilityDiscover (void) 
     {

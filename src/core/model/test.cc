@@ -33,7 +33,7 @@
 /**
  * \file
  * \ingroup testing
- * Implementation of the testing classes and functions
+ * \brief ns3::TestCase, ns3::TestSuite, ns3::TestRunner implementations,
  */
 
 namespace ns3 {
@@ -133,6 +133,7 @@ struct TestCase::Result
 /**
  * \ingroup testingimpl
  * Container for all tests.
+ * \todo Move TestRunnerImpl to separate file.
  */
 class TestRunnerImpl : public Singleton<TestRunnerImpl>
 {
@@ -1078,16 +1079,15 @@ TestRunnerImpl::Run (int argc, char *argv[])
         std::string testname = test->GetName ();
         std::string runner = "[" + SystemPath::Split (argv[0]).back () + "]";
 
-        int  desargc = argc + 1;
-        char ** desargv = new char * [desargc];
-        desargv[0] = const_cast<char *>(testname.c_str ());
-        desargv[1] = const_cast<char *>(runner.c_str ());
-        for (int i = 2; i < desargc; ++i)
+        std::vector<std::string> desargs;
+        desargs.push_back (testname);
+        desargs.push_back (runner);
+        for (int i = 1; i < argc; ++i)
           {
-            desargv[i] = argv[i - 1];
+            desargs.push_back (argv[i]);
           }
-        DesMetrics::Get ()->Initialize (desargc, desargv, m_tempDir);
-        delete [] desargv;
+
+        DesMetrics::Get ()->Initialize (desargs, m_tempDir);
       }
 #endif
       

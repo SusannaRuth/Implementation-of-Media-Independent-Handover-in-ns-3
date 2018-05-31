@@ -170,7 +170,7 @@ def build(bld):
         'helper/wifi-mih-link-sap-helper.h',
         ]
 
-    #if bld.env['ENABLE_EXAMPLES']:
-    #    bld.recurse('examples')
+    if bld.env['ENABLE_EXAMPLES']:
+        bld.recurse('examples')
 
     #bld.ns3_python_bindings()

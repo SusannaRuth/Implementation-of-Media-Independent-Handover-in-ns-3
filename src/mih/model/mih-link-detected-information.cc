@@ -32,7 +32,8 @@ namespace ns3 {
 						      //DataRate dataRate,
                                                       SupportedRates supportedRates,
 						      MihCapabilityFlag mihCapabilityFlag,
-						      NetworkCapabilities networkCapabilities) :
+						      NetworkCapabilities networkCapabilities,
+                                                      uint32_t stationCount) :
       m_linkIdentifier (linkIdentifier),
       m_networkIdentifier (networkIdentifier),
       m_networkAuxiliaryIdentifier (networkAuxiliaryIdentifier),
@@ -41,7 +42,8 @@ namespace ns3 {
       //m_dataRate (dataRate),
       m_supportedRates ( supportedRates),
       m_mihCapabilityFlag (mihCapabilityFlag),
-      m_networkCapabilities (networkCapabilities)
+      m_networkCapabilities (networkCapabilities),
+      m_stationCount(stationCount)
     {}
     LinkDetectedInformation::LinkDetectedInformation (LinkDetectedInformation const &o) :
       m_linkIdentifier (o.m_linkIdentifier),
@@ -52,7 +54,8 @@ namespace ns3 {
       //m_dataRate (o.m_dataRate),
       m_supportedRates ( o.m_supportedRates),
       m_mihCapabilityFlag (o.m_mihCapabilityFlag),
-      m_networkCapabilities (o.m_networkCapabilities)
+      m_networkCapabilities (o.m_networkCapabilities),
+      m_stationCount (o.m_stationCount)
     {}
     LinkIdentifier 
     LinkDetectedInformation::GetLinkIdentifier (void)
@@ -98,6 +101,11 @@ namespace ns3 {
     LinkDetectedInformation::GetNetworkCapabilities (void) 
     {
       return m_networkCapabilities;
+    }
+    uint32_t
+    LinkDetectedInformation::GetStationCount (void)
+    {
+      return m_stationCount;
     }
     uint32_t
     LinkDetectedInformation::GetTlvSerializedSize (void) const {

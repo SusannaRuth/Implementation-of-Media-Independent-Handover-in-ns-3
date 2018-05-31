@@ -1,0 +1,21 @@
+## -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
+
+def build(bld):
+    if not bld.env['ENABLE_EXAMPLES']:
+        return;
+
+    obj = bld.create_ns3_program('wifi-mih-example', 
+        ['core', 'wifi', 'internet', 'applications'])
+    obj.source = 'wifi-mih-example.cc'
+
+    obj = bld.create_ns3_program('wifi-mih-link-down-example', 
+        ['core', 'wifi', 'internet', 'applications'])
+    obj.source = 'wifi-mih-link-down-example.cc'
+
+    obj = bld.create_ns3_program('mih-ex', 
+        ['core', 'wifi', 'internet', 'applications'])
+    obj.source = 'mih-ex.cc'
+
+    obj = bld.create_ns3_program('mih-ap', 
+        ['core', 'wifi', 'internet', 'applications', 'flow-monitor'])
+    obj.source = 'mih-ap.cc'
